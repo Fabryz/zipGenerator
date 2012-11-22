@@ -1,18 +1,19 @@
-var spawn = require('child_process').spawn,
+var fs = require('fs'),
+    spawn = require('child_process').spawn,
     exec = require('child_process').exec,
-    fs = require('fs'),
     program = require('commander'),
     gitdiff = null,
-    dir = null,
+    repositoryDir = null, // /Applications/MAMP/htdocs/REPO_PosteImpresa
     SHA1 = null,
     SHA2 = null,
     currentScriptDir = process.cwd(),
-    diffSaveDir = '/diffs';
-
+    diffSaveDir = currentScriptDir +'/diffs',
+    outputDir = currentScriptDir +'/output',
+    zipName = 'PosteImpresa';
 
     program
       .version(JSON.parse(fs.readFileSync(__dirname +'/package.json', 'utf8')).version)
-      .option('Posteimpresa Git dir', 'specify the port Posteimpresa git repository directory', String)
+      .option('PosteImpresa Git dir', 'specify the ABSOLUTE Posteimpresa git repository path', String)
       .option('SHA1', 'specify the first Git SHA Hash', Number)
       .option('SHA2', 'specify the second Git SHA Hash', Number)
       .parse(process.argv);
@@ -52,9 +53,9 @@ function dirExistsSync(dir) {
 // }
 
 function saveDiff(diffData) {
-  fs.writeFile(currentScriptDir +''+ diffSaveDir +'/diff.txt', diffData, 'binary', function(err) {
+  fs.writeFile(diffSaveDir +'/diff.txt', diffData, 'binary', function(err) {
     if (err) {
-      console.log('saveDiff ERR:'+ err);
+      throw err;
     }
   });
 }
@@ -75,14 +76,14 @@ function init() {
   // Array starts from the params
   var params = process.argv.splice(2);
 
-  dir = params[0];
+  repositoryDir = params[0];
   SHA1 = params[1];
   SHA2 = params[2];
 
   // initDiffDir();
   // Remove old files
-  child = exec('rm -Rf '+ currentScriptDir +''+ diffSaveDir +'/*');
-  changeDir(dir);
+  child = exec('rm -Rf '+ diffSaveDir +'/*');
+  changeDir(repositoryDir);
   gitdiff = spawn('git', ['diff', '--name-only', SHA1, SHA2]);
 }
 
@@ -97,12 +98,18 @@ gitdiff.stdout.on('data', function (data) {
   console.log('* DIFFS *\n'+ diffData);
 
   saveDiff(diffData);
+
+  // current dir: posteimpresa
+
+  console.log(process.cwd());
+  console.log('cp '+ repositoryDir +'/_site '+ outputDir); // child = exec
+  console.log('mv '+ currentScriptDir +'/_site '+ zipName +''); // child = exec
 });
 
-gitdiff.stderr.on('data', function (data) {
+gitdiff.stderr.on('data', function(data) {
   console.log('* STDERR:\n'+ data);
 });
 
-gitdiff.on('exit', function (code) {
+gitdiff.on('exit', function(code) {
   console.log('* Process exited ('+ code +').');
 });
