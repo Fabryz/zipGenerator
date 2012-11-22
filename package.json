@@ -7,5 +7,5 @@
     "start": "node zipGenerator.js"
   },
   "private": "true",
-  "author": "Fabrizio Codello",
+  "author": "Fabrizio Codello"
 }
