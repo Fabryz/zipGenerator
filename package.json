@@ -10,6 +10,7 @@
     "node": "0.8.x"
   },
   "dependencies": {
+    "commander": "1.1.x"
   },
   "private": "true",
   "author": "Fabrizio Codello"
