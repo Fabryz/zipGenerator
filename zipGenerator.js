@@ -33,19 +33,23 @@ function dirExistsSync(dir) {
   }
 }
 
-function initDiffDir() {
+// function initDiffDir() {
   // create diffSaveDir if does not exists
-  if (!dirExistsSync(diffSaveDir)) {
-    fs.mkdir(diffSaveDir, function(err) {
-      if (err) {
-        console.log('initDiffDir ERR:'+ err);
-      }
-    });
-  } else {
+  // if (!dirExistsSync(diffSaveDir)) {
+  //   console.log('current dir: '+ process.cwd());
+  //   console.log('saving dir: '+ diffSaveDir);
+
+
+  //   fs.mkdir(process.cwd() +''+ diffSaveDir, function(err) {
+  //     if (err) {
+  //       throw err;
+  //     }
+  //   });
+  // } else {
     // if exists remove all directory contents
-    child = exec('rm -Rf '+ diffSaveDir +'/*');
-  }
-}
+    // child = exec('rm -Rf '+ currentScriptDir +''+ diffSaveDir +'/*');
+  // }
+// }
 
 function saveDiff(diffData) {
   fs.writeFile(currentScriptDir +''+ diffSaveDir +'/diff.txt', diffData, 'binary', function(err) {
@@ -56,13 +60,14 @@ function saveDiff(diffData) {
 }
 
 function changeDir(dir) {
-  console.log('* Starting directory: ' + process.cwd());
+  // console.log('* Starting directory: ' + process.cwd());
   try {
     process.chdir(dir);
-    console.log('* New directory: ' + process.cwd());
+    // console.log('* New directory: ' + process.cwd());
   }
   catch (err) {
-    console.log('* chdir ERR: ' + err);
+    // console.log('* chdir ERR: ' + err);
+    throw err;
   }
 }
 
@@ -74,7 +79,9 @@ function init() {
   SHA1 = params[1];
   SHA2 = params[2];
 
-  initDiffDir();
+  // initDiffDir();
+  // Remove old files
+  child = exec('rm -Rf '+ currentScriptDir +''+ diffSaveDir +'/*');
   changeDir(dir);
   gitdiff = spawn('git', ['diff', '--name-only', SHA1, SHA2]);
 }
