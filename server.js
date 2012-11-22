@@ -12,7 +12,16 @@ function init() {
     SHA1 = params[1];
     SHA2 = params[2];
 
-    gitdiff = spawn('git', ['diff', SHA1, SHA2]);
+    console.log('* Starting directory: ' + process.cwd());
+    try {
+      process.chdir(dir);
+      console.log('* New directory: ' + process.cwd());
+    }
+    catch (err) {
+      console.log('* chdir error: ' + err);
+    }
+
+    gitdiff = spawn('git', ['diff', '--name-only', SHA1, SHA2]);
 }
 
 /*
