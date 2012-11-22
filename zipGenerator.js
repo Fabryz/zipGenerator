@@ -6,7 +6,8 @@ var spawn = require('child_process').spawn,
     dir = null,
     SHA1 = null,
     SHA2 = null,
-    diffSaveDir = './diffs';
+    currentScriptDir = process.cwd(),
+    diffSaveDir = '/diffs';
 
 
     program
@@ -47,11 +48,22 @@ function initDiffDir() {
 }
 
 function saveDiff(diffData) {
-  fs.writeFile(diffSaveDir +'/diff.txt', diffData, 'binary', function(err) {
+  fs.writeFile(currentScriptDir +''+ diffSaveDir +'/diff.txt', diffData, 'binary', function(err) {
     if (err) {
       console.log('saveDiff ERR:'+ err);
     }
   });
+}
+
+function changeDir(dir) {
+  console.log('* Starting directory: ' + process.cwd());
+  try {
+    process.chdir(dir);
+    console.log('* New directory: ' + process.cwd());
+  }
+  catch (err) {
+    console.log('* chdir ERR: ' + err);
+  }
 }
 
 function init() {
@@ -62,16 +74,8 @@ function init() {
   SHA1 = params[1];
   SHA2 = params[2];
 
-  // console.log('* Starting directory: ' + process.cwd());
-  try {
-    process.chdir(dir);
-    // console.log('* New directory: ' + process.cwd());
-  }
-  catch (err) {
-    console.log('* chdir ERR: ' + err);
-  }
-
   initDiffDir();
+  changeDir(dir);
   gitdiff = spawn('git', ['diff', '--name-only', SHA1, SHA2]);
 }
 
@@ -84,6 +88,7 @@ init();
 gitdiff.stdout.on('data', function (data) {
   diffData = SHA1 +' '+ SHA2 +'\n\n'+ data;
   console.log('* DIFFS *\n'+ diffData);
+
   saveDiff(diffData);
 });
 
