@@ -1,12 +1,11 @@
 {
-  "name": "autoimpreza",
-  "version": "0.0.0",
+  "name": "zipGenerator",
+  "version": "0.0.1",
   "description": "ZIP creator",
-  "main": "server.js",
+  "main": "zipGenerator.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node zipGenerator.js"
   },
-  "repository": "",
   "private": "true",
   "author": "Fabrizio Codello",
 }
