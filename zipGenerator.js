@@ -10,7 +10,10 @@ var fs = require('fs'),
     diffSaveDir = currentScriptDir +'/diffs',
     outputDir = currentScriptDir +'/output',
     zipName = 'OutputZipName',
-    version = null;
+    version = null,
+    date = new Date(),
+    formattedDate = date.getUTCFullYear() +''+ (date.getUTCMonth()+1) +''+ date.getUTCDate() +'_'+ date.getUTCMilliseconds(), // TODO: remove milliseconds
+    finalZipName = null;
 
     program
       .version(JSON.parse(fs.readFileSync(__dirname +'/package.json', 'utf8')).version)
@@ -55,7 +58,7 @@ function dirExistsSync(dir) {
 // }
 
 function saveDiff(diffData) {
-  fs.writeFile(diffSaveDir +'/diff.txt', diffData, 'binary', function(err) {
+  fs.writeFile(diffSaveDir +'/DIFF-'+ finalZipName +'.txt', diffData, 'binary', function(err) {
     if (err) {
       throw err;
     }
@@ -83,9 +86,11 @@ function init() {
   SHA2 = params[2];
   version = params[3] || 1;
 
+  finalZipName = zipName +''+ formattedDate +'_'+ version;
+
   // initDiffDir();
   // Remove old files
-  child = exec('rm -Rf '+ diffSaveDir +'/*');
+  exec('rm -Rf '+ diffSaveDir +'/*');
   changeDir(repositoryDir);
   gitdiff = spawn('git', ['diff', '--name-only', SHA1, SHA2]);
 }
@@ -102,12 +107,9 @@ gitdiff.stdout.on('data', function (data) {
 
   saveDiff(diffData);
 
-  var date = new Date(),
-      formattedDate = date.getUTCFullYear() +''+ (date.getUTCMonth()+1) +''+ date.getUTCDate();
-
   exec('rm -Rf '+ outputDir +'/*');
-  exec('cp -R '+ repositoryDir +'/_site '+ outputDir +'/'); // child = exec
-  exec('mv '+ outputDir +'/_site '+ outputDir +'/'+ zipName +''+ formattedDate +'_'+ version); // child = exec
+  exec('cp -R '+ repositoryDir +'/_site/ '+ outputDir +'/'+ finalZipName); // child = exec
+  // exec('mv '+ outputDir +'/_site '+ outputDir +'/'+ finalZipName); // child = exec
 });
 
 gitdiff.stderr.on('data', function(data) {
