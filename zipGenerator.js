@@ -110,6 +110,7 @@ gitdiff.stdout.on('data', function (data) {
   saveDiff(diffData);
 
   exec('cp -R '+ repositoryDir +'/_site/ '+ outputDir +'/'+ finalZipName);
+  exec('cp '+ diffSaveDir +'/DIFF-'+ finalZipName +'.txt '+ outputDir +'/DIFF-'+ finalZipName +'.txt');
 });
 
 gitdiff.stderr.on('data', function(data) {
