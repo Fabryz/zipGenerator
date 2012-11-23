@@ -91,6 +91,8 @@ function init() {
   // initDiffDir();
   // Remove old files
   exec('rm -Rf '+ diffSaveDir +'/*');
+  exec('rm -Rf '+ outputDir +'/*');
+
   changeDir(repositoryDir);
   gitdiff = spawn('git', ['diff', '--name-only', SHA1, SHA2]);
 }
@@ -107,9 +109,7 @@ gitdiff.stdout.on('data', function (data) {
 
   saveDiff(diffData);
 
-  exec('rm -Rf '+ outputDir +'/*');
-  exec('cp -R '+ repositoryDir +'/_site/ '+ outputDir +'/'+ finalZipName); // child = exec
-  // exec('mv '+ outputDir +'/_site '+ outputDir +'/'+ finalZipName); // child = exec
+  exec('cp -R '+ repositoryDir +'/_site/ '+ outputDir +'/'+ finalZipName);
 });
 
 gitdiff.stderr.on('data', function(data) {
