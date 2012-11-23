@@ -1,4 +1,5 @@
 var fs = require('fs'),
+    asynch = require('async'),
     spawn = require('child_process').spawn,
     exec = require('child_process').exec,
     program = require('commander'),
@@ -33,7 +34,7 @@ var fs = require('fs'),
 // check if directory exists
 function dirExistsSync(dir) {
   try {
-    return fs.statSync(dir).isDirectory();
+    return fs.statSynch(dir).isDirectory();
   } catch (err) {
     return false;
   }
@@ -111,6 +112,11 @@ gitdiff.stdout.on('data', function (data) {
 
   exec('cp -R '+ repositoryDir +'/_site/ '+ outputDir +'/'+ finalZipName);
   exec('cp '+ diffSaveDir +'/DIFF-'+ finalZipName +'.txt '+ outputDir +'/DIFF-'+ finalZipName +'.txt');
+
+  var netBeansDir = outputDir +'/'+ finalZipName +'/nbproject';
+  // if (dirExistsSync(netBeansDir)) {
+    exec('rm -Rf '+ netBeansDir);
+  // }
 });
 
 gitdiff.stderr.on('data', function(data) {
