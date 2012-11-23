@@ -9,7 +9,8 @@ var fs = require('fs'),
     currentScriptDir = process.cwd(),
     diffSaveDir = currentScriptDir +'/diffs',
     outputDir = currentScriptDir +'/output',
-    zipName = 'PosteImpresa';
+    zipName = 'PosteImpresa',
+    version = 1; // FIXME
 
     program
       .version(JSON.parse(fs.readFileSync(__dirname +'/package.json', 'utf8')).version)
@@ -101,9 +102,13 @@ gitdiff.stdout.on('data', function (data) {
 
   // current dir: posteimpresa
 
+  var date = new Date(),
+      formattedDate = date.getUTCFullYear() +''+ (date.getUTCMonth()+1) +''+ date.getUTCDate();
+
   console.log(process.cwd());
-  console.log('cp '+ repositoryDir +'/_site '+ outputDir); // child = exec
-  console.log('mv '+ currentScriptDir +'/_site '+ zipName +''); // child = exec
+  console.log('rm -Rf '+ outputDir +'/*');
+  console.log('cp -r '+ repositoryDir +'/_site '+ outputDir); // child = exec
+  console.log('mv '+ outputDir +'/_site '+ outputDir +'/'+ zipName +''+ formattedDate +'_'+ version); // child = exec
 });
 
 gitdiff.stderr.on('data', function(data) {
