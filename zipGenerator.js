@@ -3,18 +3,18 @@ var fs = require('fs'),
     exec = require('child_process').exec,
     program = require('commander'),
     gitdiff = null,
-    repositoryDir = null, // /Applications/MAMP/htdocs/REPO_PosteImpresa
+    repositoryDir = null,
     SHA1 = null,
     SHA2 = null,
     currentScriptDir = process.cwd(),
     diffSaveDir = currentScriptDir +'/diffs',
     outputDir = currentScriptDir +'/output',
-    zipName = 'PosteImpresa',
+    zipName = 'OutputZipName',
     version = null;
 
     program
       .version(JSON.parse(fs.readFileSync(__dirname +'/package.json', 'utf8')).version)
-      .option('PosteImpresa Git dir', 'specify the ABSOLUTE Posteimpresa git repository path', String)
+      .option('Git dir', 'specify the ABSOLUTE git repository path', String)
       .option('SHA1', 'specify the first Git SHA Hash', Number)
       .option('SHA2', 'specify the second Git SHA Hash', Number)
       .option('version', 'specify the ZIP version', Number, 1)
@@ -101,8 +101,6 @@ gitdiff.stdout.on('data', function (data) {
   console.log('* DIFFS *\n'+ diffData);
 
   saveDiff(diffData);
-
-  // current dir: posteimpresa
 
   var date = new Date(),
       formattedDate = date.getUTCFullYear() +''+ (date.getUTCMonth()+1) +''+ date.getUTCDate();
