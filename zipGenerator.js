@@ -10,13 +10,14 @@ var fs = require('fs'),
     diffSaveDir = currentScriptDir +'/diffs',
     outputDir = currentScriptDir +'/output',
     zipName = 'PosteImpresa',
-    version = 1; // FIXME
+    version = null;
 
     program
       .version(JSON.parse(fs.readFileSync(__dirname +'/package.json', 'utf8')).version)
       .option('PosteImpresa Git dir', 'specify the ABSOLUTE Posteimpresa git repository path', String)
       .option('SHA1', 'specify the first Git SHA Hash', Number)
       .option('SHA2', 'specify the second Git SHA Hash', Number)
+      .option('version', 'specify the ZIP version', Number, 1)
       .parse(process.argv);
 
     // program
@@ -80,6 +81,7 @@ function init() {
   repositoryDir = params[0];
   SHA1 = params[1];
   SHA2 = params[2];
+  version = params[3] || 1;
 
   // initDiffDir();
   // Remove old files
